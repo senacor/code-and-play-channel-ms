@@ -28,8 +28,8 @@ class ChannelService(val channelRepository: ChannelRepository) {
             log.info("Created new channel [{}]", newChannel.name)
             return channelRepository.save(newChannel)
         }
-
-        return channel.get()
+        channel.get().endpoint = newChannel.endpoint
+        return channelRepository.save(channel.get())
     }
 
     @Scheduled(fixedDelay = 30000)
