@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE_NAME}
+  #namespace: services
+  labels:
+    app: "${SERVICE_NAME}"
+    serviceVersion: "${TRAVIS_BUILD_NUMBER}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "${SERVICE_NAME}"
+  template:
+    metadata:
+      #namespace: services
+      labels:
+        app: "${SERVICE_NAME}"
+        serviceVersion: "${TRAVIS_BUILD_NUMBER}"
+    spec:
+      containers:
+        - name: ${SERVICE_NAME}
+          image: eu.gcr.io/code-and-play/${DOCKER_IMAGE}
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVICE_CHANNEL
+            value: ${TRAVIS_BRANCH}
+          ports:
+          - name: http
+            containerPort: 8080
