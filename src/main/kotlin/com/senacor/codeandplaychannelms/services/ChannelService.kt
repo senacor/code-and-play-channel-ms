@@ -4,8 +4,10 @@ import com.senacor.codeandplaychannelms.model.Channel
 import com.senacor.codeandplaychannelms.repository.ChannelRepository
 import feign.Feign
 import feign.jackson.JacksonDecoder
+import feign.jackson.JacksonEncoder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cloud.openfeign.support.SpringMvcContract
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
@@ -37,10 +39,12 @@ class ChannelService(val channelRepository: ChannelRepository) {
         channels.forEach {
             log.info("Checking status of channel [{}]", it.name)
             val client = Feign.builder()
+                    .encoder(JacksonEncoder())
                     .decoder(JacksonDecoder())
+                    .contract(SpringMvcContract())
                     .target(HealthCheckClient::class.java, it.endpoint)
 
-            val status = client.checkChannel(it.name)
+            val status = client.checkChannel()
             log.info("Channel [{}] is [{}]", it.name, status.status)
 
             it.online = "UP" == status.status

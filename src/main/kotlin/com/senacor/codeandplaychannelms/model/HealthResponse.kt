@@ -1,3 +1,5 @@
 package com.senacor.codeandplaychannelms.model
 
-data class HealthResponse(val status: String)
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class HealthResponse(@JsonProperty("status") var status: String)
