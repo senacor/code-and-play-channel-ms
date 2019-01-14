@@ -4,10 +4,10 @@ metadata:
   name: ${SERVICE_NAME}
   #namespace: services
   labels:
-    app: "${SERVICE_NAME}
+    app: "${SERVICE_NAME}"
 spec:
   selector:
-    app: "${SERVICE_NAME}
+    app: "${SERVICE_NAME}"
   ports:
   - port: 8080
     targetPort: 8080
