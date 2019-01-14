@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+export DOCKER_IMAGE=$SERVICE_NAME:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER
