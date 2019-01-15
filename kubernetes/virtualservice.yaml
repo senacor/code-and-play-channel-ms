@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ${SERVICE_NAME}
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        exact: /api/channels
+    route:
+    - destination:
+        host: ${SERVICE_NAME}
+        port:
+          number: 8080
