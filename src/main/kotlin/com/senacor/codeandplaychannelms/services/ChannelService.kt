@@ -2,14 +2,11 @@ package com.senacor.codeandplaychannelms.services
 
 import com.senacor.codeandplaychannelms.model.Channel
 import com.senacor.codeandplaychannelms.repository.ChannelRepository
-import feign.Feign
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.cloud.openfeign.support.SpringMvcContract
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 
 @Service
@@ -22,32 +19,36 @@ class ChannelService(val channelRepository: ChannelRepository) {
     }
 
     fun registerChannel(newChannel: Channel): Channel {
+        val heartbeatTime = Instant.now()
         val channel = channelRepository.findById(newChannel.name)
 
         if(!channel.isPresent) {
+            newChannel.lastHeartbeat = heartbeatTime
             log.info("Created new channel [{}]", newChannel.name)
             return channelRepository.save(newChannel)
         }
+
         channel.get().endpoint = newChannel.endpoint
+        channel.get().lastHeartbeat = heartbeatTime
+        channel.get().online = true
+
         return channelRepository.save(channel.get())
     }
 
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 60000)
     fun checkChannelStatus() {
+        val now = Instant.now()
         val channels = channelRepository.findAll()
 
         channels.forEach {
             log.info("Checking status of channel [{}]", it.name)
-            val client = Feign.builder()
-                    .encoder(JacksonEncoder())
-                    .decoder(JacksonDecoder())
-                    .contract(SpringMvcContract())
-                    .target(HealthCheckClient::class.java, it.endpoint)
 
-            val status = client.checkChannel()
-            log.info("Channel [{}] is [{}]", it.name, status.status)
+            if(now.isAfter(it.lastHeartbeat.plusSeconds(60))) {
+                // Channel is offline
+                it.online = false
+            }
 
-            it.online = "UP" == status.status
+            log.info("Channel [{}] is  online: [{}]", it.name, it.online)
 
             channelRepository.save(it)
         }
