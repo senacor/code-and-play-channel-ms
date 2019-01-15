@@ -15,7 +15,7 @@ class ChannelService(val channelRepository: ChannelRepository) {
     val log: Logger = LoggerFactory.getLogger(ChannelService::class.java)
 
     fun getAllChannels(): List<Channel> {
-        return channelRepository.findAll().filter { it.online }
+        return channelRepository.findAll().filter { it.online }.onEach { it.endpoint = null }
     }
 
     fun registerChannel(newChannel: Channel): Channel {

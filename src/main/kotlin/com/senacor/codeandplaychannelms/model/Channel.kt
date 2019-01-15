@@ -11,7 +11,7 @@ import javax.persistence.Id
 @Validated
 data class Channel(@Id @JsonProperty("name") var name: String) {
 
-    @JsonProperty("endpoint") lateinit var endpoint: String
+    @JsonProperty("endpoint") var endpoint: String? = null
     @JsonIgnore var online: Boolean = true
     @JsonIgnore var lastHeartbeat: Instant = Instant.now()
 
