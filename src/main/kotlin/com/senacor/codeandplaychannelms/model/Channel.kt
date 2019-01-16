@@ -10,7 +10,8 @@ import javax.persistence.Id
 
 @Entity
 @Validated
-data class Channel(@Id @JsonProperty("name") var name: String) {
+data class Channel(@Id @JsonProperty("id") var id: String,
+                   @JsonProperty("name") var name: String = id) {
 
     @JsonInclude(JsonInclude.Include.NON_NULL) var endpoint: String? = null
     @JsonIgnore var online: Boolean = true
