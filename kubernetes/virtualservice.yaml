@@ -26,3 +26,19 @@ spec:
         host: ${SERVICE_NAME}
         port:
           number: 8080
+  - match:
+    - uri:
+        exact: /test/index.html
+    route:
+    - destination:
+        host: ${SERVICE_NAME}
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /test2/
+    route:
+    - destination:
+        host: ${SERVICE_NAME}
+        port:
+          number: 8080
