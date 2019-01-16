@@ -16,3 +16,13 @@ spec:
         host: ${SERVICE_NAME}
         port:
           number: 8080
+  - match:
+    - uri:
+        prefix: /frontend/
+      rewrite:
+        uri: /
+    route:
+    - destination:
+        host: ${SERVICE_NAME}
+        port:
+          number: 8080
